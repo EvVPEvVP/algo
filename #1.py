@@ -38,6 +38,7 @@ class MaxQueue:
         return max(self.instack.get_max(), self.outstack.get_max())
 
 #2.
+
 class ImmutableStack:
     def __init__(self, head=None, tail=None):
         self._head = head
@@ -70,6 +71,48 @@ EMPTY_STACK = ImmutableStack()
 
 #3.
 
+class ImmutableQueue:
+    def __init__(self, forward=EMPTY_STACK, back=EMPTY_STACK):
+        self._forward = forward
+        self._back = back
+
+    def is_empty(self):
+        return self._forward.is_empty() and self._back.is_empty()
+
+    def enqueue(self, val):
+        if self.is_empty():
+            return ImmutableQueue(self._forward.push(val), self._back)
+        return ImmutableQueue(self._forward, self._back.push(val))
+
+    def dequeue(self):
+        if self.is_empty():
+            raise IndexError("Очередь пуста")
+        
+        val, new_forward = self._forward.pop()
+        if not new_forward.is_empty():
+            return val, ImmutableQueue(new_forward, self._back)
+        
+        if self._back.is_empty():
+            return val, EMPTY_QUEUE
+        
+        # Переворачиваем
+        temp, inv_forward = self._back, EMPTY_STACK
+        while not temp.is_empty():
+            v, temp = temp.pop()
+            inv_forward = inv_forward.push(v)
+            
+        return val, ImmutableQueue(inv_forward, EMPTY_STACK)
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Очередь пуста")
+        return self._forward.peek()
+
+    def __iter__(self):
+        yield from self._forward
+        yield from reversed(list(self._back))
+
+EMPTY_QUEUE = ImmutableQueue()
 
 
 
