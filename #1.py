@@ -1,3 +1,5 @@
+#1.
+
 class MaxStack:
     def __init__(self):
         self.stack = []  # Хранит кортеж (значение, текущий_максимум)
@@ -34,3 +36,40 @@ class MaxQueue:
         if not self.outstack.stack:
             return self.instack.get_max()
         return max(self.instack.get_max(), self.outstack.get_max())
+
+#2.
+class ImmutableStack:
+    def __init__(self, head=None, tail=None):
+        self._head = head
+        self._tail = tail  # Ссылка на предыдущий ImmutableStack
+
+    def is_empty(self):
+        return self._tail is None
+
+    def push(self, val):
+        return ImmutableStack(val, self)
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Стек пуст")
+        return self._head, self._tail
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Стек пуст")
+        return self._head
+
+    def __iter__(self):
+        curr = self
+        while not curr.is_empty():
+            yield curr._head
+            curr = curr._tail
+
+# Инициализация пустого стека
+EMPTY_STACK = ImmutableStack()
+
+#3.
+
+
+
+
